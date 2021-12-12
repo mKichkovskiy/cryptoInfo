@@ -1,8 +1,8 @@
-import axios from 'axios';
-import moment from 'moment';
+import axios from 'axios'
+import moment from 'moment'
 
 const formatSparkline = (numbers) => {
-  const sevenDaysAgo = moment().subtract(7, 'days').unix();
+  const sevenDaysAgo = moment().subtract(7, 'days').unix()
   let formattedSparkline = numbers.map((item, index) => {
     return {
       x: sevenDaysAgo + (index + 1) * 3600,
@@ -10,35 +10,37 @@ const formatSparkline = (numbers) => {
     }
   })
 
-  return formattedSparkline;
+  return formattedSparkline
 }
 
 const formatMarketData = (data) => {
-  let formattedData = [];
+  let formattedData = []
 
-  data.forEach(item => {
+  data.forEach((item) => {
     const formattedSparkline = formatSparkline(item.sparkline_in_7d.price)
 
     const formattedItem = {
       ...item,
       sparkline_in_7d: {
-        price: formattedSparkline
-      }
+        price: formattedSparkline,
+      },
     }
 
-    formattedData.push(formattedItem);
-  });
+    formattedData.push(formattedItem)
+  })
 
-  return formattedData;
+  return formattedData
 }
 
 export const getMarketData = async () => {
   try {
-    const response = await axios.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=true&price_change_percentage=7d");
-    const data = response.data;
-    const formattedResponse = formatMarketData(data);
-    return formattedResponse;
+    const response = await axios.get(
+      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=7d'
+    )
+    const data = response.data
+    const formattedResponse = formatMarketData(data)
+    return formattedResponse
   } catch (error) {
-    console.log(error.message);
+    console.log(error.message)
   }
 }

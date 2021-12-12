@@ -1,75 +1,99 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Image, Dimensions, ActivityIndicator } from 'react-native'
-import {ChartDot, ChartPath, ChartPathProvider, ChartYLabel} from '@rainbow-me/animated-charts';
-import { useSharedValue } from 'react-native-reanimated';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native'
+import {
+  ChartDot,
+  ChartPath,
+  ChartPathProvider,
+  ChartYLabel,
+} from '@rainbow-me/animated-charts'
+import { useSharedValue } from 'react-native-reanimated'
 
-const { width: SIZE } = Dimensions.get('window');
+const { width: SIZE } = Dimensions.get('window')
 
+const Chart = ({
+  currentPrice,
+  logoUrl,
+  name,
+  symbol,
+  priceChangePercentage7d,
+  sparkline,
+  market_cap,
+}) => {
+  const setMarketCap = (market_cap) => {
+    const res = Number.parseInt(market_cap) / 1000000000
+    return '$' + res.toString().slice(0, 7) + 'B'
+  }
 
-const Chart = ({ currentPrice, logoUrl, name, symbol, priceChangePercentage7d, sparkline }) => {
-  const latestCurrentPrice = useSharedValue(currentPrice);
-  const [chartReady, setChartReady] = useState(false);
+  const latestCurrentPrice = useSharedValue(currentPrice)
+  const [chartReady, setChartReady] = useState(false)
 
-  const priceChangeColor = priceChangePercentage7d > 0 ? '#34C759' : '#FF3B30';
+  const priceChangeColor = priceChangePercentage7d > 0 ? '#34C759' : '#FF3B30'
 
   useEffect(() => {
-    latestCurrentPrice.value = currentPrice;
+    latestCurrentPrice.value = currentPrice
 
     setTimeout(() => {
-      setChartReady(true);
+      setChartReady(true)
     }, 0)
-
   }, [currentPrice])
 
-  const formatUSD = value => {
-    'worklet';
+  const formatUSD = (value) => {
+    'worklet'
     if (value === '') {
-      const formattedValue = `$${latestCurrentPrice.value.toLocaleString('en-US', { currency: 'USD' })}`
-      return formattedValue;
+      const formattedValue = `$${latestCurrentPrice.value.toLocaleString(
+        'en-US',
+        { currency: 'USD' }
+      )}`
+      return formattedValue
     }
 
-    const formattedValue =`$${parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`
-    return formattedValue;
-  };
+    const formattedValue = `$${parseFloat(value)
+      .toFixed(2)
+      .replace(/\d(?=(\d{3})+\.)/g, '$&,')}`
+    return formattedValue
+  }
 
   if (sparkline.length === 0) {
     return <Text>Loading...</Text>
   }
 
   return (
-    <ChartPathProvider data={{ points: sparkline, smoothingStrategy: 'bezier' }}>
+    <ChartPathProvider
+      data={{ points: sparkline, smoothingStrategy: 'bezier' }}
+    >
       <View style={styles.chartWrapper}>
-
         {/* Titles */}
         <View style={styles.titlesWrapper}>
           <View style={styles.upperTitles}>
             <View style={styles.upperLeftTitle}>
               <Image source={{ uri: logoUrl }} style={styles.image} />
-              <Text style={styles.subtitle}>{name} ({symbol.toUpperCase()})</Text>
+              <Text style={styles.subtitle}>
+                {name} ({symbol.toUpperCase()})
+              </Text>
             </View>
             <Text style={styles.subtitle}>7d</Text>
           </View>
           <View style={styles.lowerTitles}>
-            <ChartYLabel
-              format={formatUSD}
-              style={styles.boldTitle}
-            />
-            <Text style={[styles.title, {color: priceChangeColor}]}>{priceChangePercentage7d.toFixed(2)}%</Text>
+            <ChartYLabel format={formatUSD} style={styles.boldTitle} />
+            <Text style={[styles.title, { color: priceChangeColor }]}>
+              {priceChangePercentage7d.toFixed(2)}%
+            </Text>
           </View>
         </View>
-
-        { chartReady ?
-        (<View style={styles.chartLineWrapper}>
-          <ChartPath height={SIZE / 2} stroke="black" width={SIZE} />
-          <ChartDot style={{ backgroundColor: 'black' }} />
-          </View>)
-
-          :
-
-          null
-        
-        }
-        
+        {/* побудова графіку */}
+        {chartReady ? (
+          <View style={styles.chartLineWrapper}>
+            <ChartPath height={SIZE / 2} stroke="#bb86fc" width={SIZE} />
+            <ChartDot style={{ backgroundColor: '#bb86fc' }} />
+          </View>
+        ) : null}
+      </View>
+      {/* market_cap */}
+      <View style={styles.marketCapWrapper}>
+        <Text style={styles.marketTitle}>Market Cap</Text>
+        <Text style={[styles.subtitle, { marginTop: 5 }]}>
+          {setMarketCap(market_cap)}
+        </Text>
       </View>
     </ChartPathProvider>
   )
@@ -77,15 +101,17 @@ const Chart = ({ currentPrice, logoUrl, name, symbol, priceChangePercentage7d, s
 
 const styles = StyleSheet.create({
   chartWrapper: {
-    marginVertical: 16
+    marginVertical: 16,
   },
   titlesWrapper: {
-    marginHorizontal: 16
+    marginHorizontal: 16,
+    color: '#dedede',
   },
   upperTitles: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    color: '#dedede',
   },
   upperLeftTitle: {
     flexDirection: 'row',
@@ -97,8 +123,8 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#A9ABB1',
+    fontSize: 20,
+    color: '#898989',
   },
   lowerTitles: {
     flexDirection: 'row',
@@ -106,15 +132,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   boldTitle: {
-    fontSize: 24,
+    fontSize: 19,
     fontWeight: 'bold',
+    color: '#898989',
   },
   title: {
     fontSize: 18,
   },
   chartLineWrapper: {
-    marginTop: 40,
+    marginTop: 10,
+    padding: 1,
+    backgroundColor: '#1e1e1e',
   },
-});
+  marketCapWrapper: { marginLeft: 20 },
+  marketTitle: { fontSize: 20, color: 'green' },
+})
 
 export default Chart
