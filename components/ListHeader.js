@@ -8,7 +8,6 @@ function ListHeader({ search }) {
       <View style={styles.titleWrapper}>
         <View style={styles.logoWrapper}>
           {!search && (
-            //лінка на головну
             <Link to="/">
               <Image
                 style={styles.moon}

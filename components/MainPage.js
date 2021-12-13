@@ -42,7 +42,7 @@ function MainPage() {
     if (selectedValue === 'default') {
       handleChangeDef()
     }
-    if (selectedValue === 'hight') {
+    if (selectedValue === 'higth') {
       handleChangeHight()
     }
     if (selectedValue === 'low') {
@@ -61,13 +61,13 @@ function MainPage() {
   }
 
   const handleChangeLow = useCallback(async () => {
-    Alert.alert('Data changed!') // alert modal
+    Alert.alert('Data changed to low!') // alert modal
     const marketData = await getMarketData()
     setData(marketData.sort((a, b) => a.current_price - b.current_price))
   }, [])
 
   const handleChangeHight = useCallback(async () => {
-    Alert.alert('Data changed!')
+    Alert.alert('Data changed to hight!')
     const marketData = await getMarketData()
     setData(
       marketData.sort((a, b) => a.current_price - b.current_price).reverse()
@@ -75,7 +75,7 @@ function MainPage() {
   }, [])
 
   const handleChangeDef = useCallback(async () => {
-    Alert.alert('Data changed!')
+    Alert.alert('Data changed to default!')
     const marketData = await getMarketData()
     setData(marketData)
   }, [])
@@ -83,6 +83,26 @@ function MainPage() {
   return (
     <BottomSheetModalProvider>
       <SafeAreaView style={styles.container}>
+        <ListHeader search={true} />
+        <View style={styles.fixToText}>
+          <Text style={styles.price}>Price:</Text>
+          {/* кнопки для фільтру */}
+          <Picker
+            style={{
+              height: 50,
+              width: '100%',
+              color: '#324797',
+            }}
+            selectedValue={selectedValue}
+            onValueChange={(value) => setSelectedValue(value)}
+          >
+            <Picker.Item label="Default" value="default" />
+            <Picker.Item label="Higth" value="higth" />
+            <Picker.Item label="Low" value="low" />
+          </Picker>
+        </View>
+        <View style={styles.divider} />
+
         <FlatList
           keyExtractor={(item) => item.id}
           data={data}
@@ -99,28 +119,7 @@ function MainPage() {
               onPress={() => openModal(item)}
             />
           )}
-          ListHeaderComponent={
-            <>
-              <ListHeader search={true} />
-              <View style={styles.fixToText}>
-                <Text style={styles.price}>Price:</Text>
-                {/* кнопки для фільтру */}
-                <Picker
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    color: '#324797',
-                  }}
-                  selectedValue={selectedValue}
-                  onValueChange={(value) => setSelectedValue(value)}
-                >
-                  <Picker.Item label="Default" value="default" />
-                  <Picker.Item label="Higth" value="higth" />
-                  <Picker.Item label="Low" value="low" />
-                </Picker>
-              </View>
-            </>
-          }
+          ListHeaderComponent={<></>}
         />
       </SafeAreaView>
 
@@ -191,6 +190,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 16,
     alignItems: 'center',
+    backgroundColor: '#121212',
   },
   logoWrapper: {
     flexDirection: 'row',
