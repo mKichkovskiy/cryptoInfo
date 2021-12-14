@@ -46,8 +46,10 @@ function Search() {
   }, [])
 
   const handleSearch = useCallback(
-    (data) => data.filter((row) => row.name.toLowerCase().indexOf(value) > -1),
-    []
+    (data) => {
+      return data.filter((row) => row.name.toLowerCase().indexOf(value) > -1)
+    },
+    [value]
   )
 
   return (
@@ -66,6 +68,10 @@ function Search() {
           {value.length === 0 ? (
             <View style={styles.noText}>
               <Text style={styles.noTextTitle}>Enter Text!</Text>
+            </View>
+          ) : handleSearch(data).length === 0 ? (
+            <View style={styles.noText}>
+              <Text style={styles.noTextTitle}>No coins!</Text>
             </View>
           ) : (
             <FlatList

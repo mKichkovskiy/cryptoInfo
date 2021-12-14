@@ -42,7 +42,7 @@ function MainPage() {
     if (selectedValue === 'default') {
       handleChangeDef()
     }
-    if (selectedValue === 'higth') {
+    if (selectedValue === 'high') {
       handleChangeHight()
     }
     if (selectedValue === 'low') {
@@ -97,7 +97,7 @@ function MainPage() {
             onValueChange={(value) => setSelectedValue(value)}
           >
             <Picker.Item label="Default" value="default" />
-            <Picker.Item label="Higth" value="higth" />
+            <Picker.Item label="High" value="high" />
             <Picker.Item label="Low" value="low" />
           </Picker>
         </View>
