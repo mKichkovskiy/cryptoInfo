@@ -59,7 +59,11 @@ const Chart = ({
     if (value === '') {
       return `Last update ${latestTime.value}`
     }
-    return `${new Date(value * 1000)}`
+
+    var a = new Date(
+      (Number.parseInt(value) / 1000).toString().split('.')[0] * 1000
+    )
+    return a.toLocaleDateString() + ', ' + a.toLocaleTimeString()
   }
 
   if (sparkline.length === 0) {

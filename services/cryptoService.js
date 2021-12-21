@@ -5,6 +5,7 @@ export const formatDate = (date) => moment(date).format('HH:mm, MMM D, YYYY')
 
 const formatSparkline = (numbers) => {
   let formattedSparkline = numbers.map((item) => {
+    console.log(item[0])
     return {
       x: item[0],
       y: item[1],
@@ -40,7 +41,7 @@ export const getMarketData = async () => {
 export const getCoinHistoryPrice = async (id) => {
   try {
     const response = await axios.get(
-      `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=7d`
+      `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=7`
     )
     const data = response.data
     return data
