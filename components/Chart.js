@@ -4,13 +4,16 @@ import {
   ChartDot,
   ChartPath,
   ChartPathProvider,
+  ChartXLabel,
   ChartYLabel,
 } from '@rainbow-me/animated-charts'
 import { useSharedValue } from 'react-native-reanimated'
+import { formatDate } from '../services/cryptoService'
 
 const { width: SIZE } = Dimensions.get('window')
 
 const Chart = ({
+  last_updated,
   currentPrice,
   logoUrl,
   name,
@@ -25,13 +28,11 @@ const Chart = ({
   }
 
   const latestCurrentPrice = useSharedValue(currentPrice)
+  const latestTime = useSharedValue(formatDate(last_updated))
   const [chartReady, setChartReady] = useState(false)
-
   const priceChangeColor = priceChangePercentage7d > 0 ? '#34C759' : '#FF3B30'
-
   useEffect(() => {
     latestCurrentPrice.value = currentPrice
-
     setTimeout(() => {
       setChartReady(true)
     }, 0)
@@ -51,6 +52,14 @@ const Chart = ({
       .toFixed(2)
       .replace(/\d(?=(\d{3})+\.)/g, '$&,')}`
     return formattedValue
+  }
+
+  const formatTime = (value) => {
+    'worklet'
+    if (value === '') {
+      return `Last update ${latestTime.value}`
+    }
+    return `${new Date(value * 1000)}`
   }
 
   if (sparkline.length === 0) {
@@ -78,6 +87,9 @@ const Chart = ({
             <Text style={[styles.title, { color: priceChangeColor }]}>
               {priceChangePercentage7d.toFixed(2)}%
             </Text>
+          </View>
+          <View>
+            <ChartXLabel format={formatTime} />
           </View>
         </View>
         {/* побудова графіку */}

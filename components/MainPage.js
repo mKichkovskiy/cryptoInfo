@@ -14,7 +14,11 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
-import { getMarketData } from '../services/cryptoService'
+import {
+  formatMarketData,
+  getCoinHistoryPrice,
+  getMarketData,
+} from '../services/cryptoService'
 import ListHeader from './ListHeader'
 
 function MainPage() {
@@ -55,10 +59,17 @@ function MainPage() {
 
   const snapPoints = useMemo(() => ['55%'], [])
 
-  const openModal = (item) => {
-    setSelectedCoinData(item)
-    bottomSheetModalRef.current?.present()
-  }
+  // open modal and fetch data prices 7d
+  const openModal = useCallback(
+    async (item) => {
+      await getCoinHistoryPrice(item.id).then((res) =>
+        setSelectedCoinData(formatMarketData(item, res.prices))
+      )
+      bottomSheetModalRef.current?.present()
+      return () => setSelectedCoinData(null)
+    },
+    [bottomSheetModalRef]
+  )
 
   const handleChangeLow = useCallback(async () => {
     Alert.alert('Data changed to low!') // alert modal
@@ -132,6 +143,7 @@ function MainPage() {
         {/* перевірка данних графіку */}
         {selectedCoinData ? (
           <Chart
+            last_updated={selectedCoinData.last_updated}
             market_cap={selectedCoinData.market_cap}
             currentPrice={selectedCoinData.current_price}
             logoUrl={selectedCoinData.image}
